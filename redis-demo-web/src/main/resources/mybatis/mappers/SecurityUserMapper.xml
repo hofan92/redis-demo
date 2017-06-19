@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dlt.server.core.repository.mybatis.SecurityUserMapper">
+    <resultMap id="BaseResultMap" type="com.dlt.server.facade.dto.SecurityUserDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_address" property="userAddress" jdbcType="VARCHAR"/>
+        <result column="occupation_level" property="occupationLevel" jdbcType="INTEGER"/>
+        <result column="unit_id" property="unitId" jdbcType="VARCHAR"/>
+        <result column="unit_name" property="unitName" jdbcType="VARCHAR"/>
+        <result column="unit_type" property="unitType" jdbcType="VARCHAR"/>
+        <result column="department_id" property="departmentId" jdbcType="VARCHAR"/>
+        <result column="department_name" property="departmentName" jdbcType="VARCHAR"/>
+        <result column="role_id" property="roleId" jdbcType="VARCHAR"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="telephone" property="telephone" jdbcType="BIGINT"/>
+        <result column="valid" property="valid" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <include refid="Base_Column_List_Exclude_Password"/>
+        ,password
+    </sql>
+
+    <!--除去密码-->
+    <sql id="Base_Column_List_Exclude_Password">
+        id, real_name, user_name,user_address, occupation_level, unit_id,unit_name, unit_type,department_id,
+        department_name,role_id,role_name, telephone,
+        valid, create_time, update_time
+    </sql>
+
+    <!--通用查询条件-->
+    <sql id="Select_By_Entity">
+        <if test="securityUserDTO.id != null and securityUserDTO.id != ''">
+            AND id = #{securityUserDTO.id,jdbcType=INTEGER}
+        </if>
+        <if test="securityUserDTO.userName != null and securityUserDTO.userName != ''">
+            AND user_name = #{securityUserDTO.userName,jdbcType=VARCHAR}
+        </if>
+        <if test="securityUserDTO.telephone != null and securityUserDTO.telephone != ''">
+            AND telephone = #{securityUserDTO.telephone,jdbcType=VARCHAR}
+        </if>
+        <if test="securityUserDTO.password != null and securityUserDTO.password != ''">
+            AND password = #{securityUserDTO.password,jdbcType=VARCHAR}
+        </if>
+        <if test="securityUserDTO.unitId != null and securityUserDTO.unitId != ''">
+            AND unit_id = #{securityUserDTO.unitId,jdbcType=VARCHAR}
+        </if>
+        <if test="securityUserDTO.roleName != null and securityUserDTO.roleName != ''">
+            AND role_name = #{securityUserDTO.roleName,jdbcType=VARCHAR}
+        </if>
+    </sql>
+
+    <!--分页查询通用条件-->
+    <sql id="Page_By_Entity">
+        <if test="queryUser.userName != null and queryUser.userName != ''">
+            AND user_name = #{queryUser.userName,jdbcType=VARCHAR}
+        </if>
+        <if test="queryUser.unitType != null and queryUser.unitName != ''">
+            AND unit_type = #{queryUser.unitType,jdbcType=VARCHAR}
+        </if>
+    </sql>
+
+    <!--根据查询条件进行查询-->
+    <select id="selectByEntity" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List_Exclude_Password"/>
+        from security_user
+        where 1=1
+        <include refid="Select_By_Entity"/>
+    </select>
+
+    <select id="listByCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List_Exclude_Password"/>
+        from security_user
+        where 1=1
+        <include refid="Page_By_Entity"/>
+    </select>
+
+    <select id="selectCountByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select
+        count(*)
+        from security_user
+        where
+        user_name = #{userName}
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List_Exclude_Password"/>
+        from security_user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectCountByUnitId" parameterType="java.lang.String" resultType="java.lang.String">
+        select id from security_user
+        where unit_id = #{unitId,jdbcType=INTEGER}
+        ORDER BY unit_id
+        limit 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from security_user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.dlt.server.facade.dto.SecurityUserDTO">
+        insert into security_user (id, real_name, password,
+        user_name, user_address, occupation_level, unit_id,unit_name,unit_type,
+        department_id, department_name,role_id, role_name,telephone, valid,
+        create_time, update_time)
+        values (#{id,jdbcType=INTEGER}, #{realName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{userName,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR}, #{occupationLevel,jdbcType=INTEGER},
+        #{unitId,jdbcType=VARCHAR},#{unitName,jdbcType=VARCHAR},#{unitType,jdbcType=VARCHAR},
+        #{departmentId,jdbcType=VARCHAR}, #{departmentName,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR},
+        #{roleName,jdbcType=VARCHAR}, #{telephone,jdbcType=BIGINT}, #{valid,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.dlt.server.facade.dto.SecurityUserDTO">
+        insert into security_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="realName != null">
+                real_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userAddress != null">
+                user_address,
+            </if>
+            <if test="occupationLevel != null">
+                occupation_level,
+            </if>
+            <if test="unitId != null">
+                unit_id,
+            </if>
+            <if test="unitName != null">
+                unit_name,
+            </if>
+            <if test="unitType != null">
+                unit_type,
+            </if>
+            <if test="departmentId != null">
+                department_id,
+            </if>
+            <if test="departmentName != null">
+                department_name,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="telephone != null">
+                telephone,
+            </if>
+            <if test="valid != null">
+                valid,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userAddress != null">
+                #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="occupationLevel != null">
+                #{occupationLevel,jdbcType=INTEGER},
+            </if>
+            <if test="unitId != null">
+                #{unitId,jdbcType=VARCHAR},
+            </if>
+            <if test="unitName != null">
+                #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="unitType != null">
+                #{unitType,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                #{departmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentName != null">
+                #{departmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                #{telephone,jdbcType=BIGINT},
+            </if>
+            <if test="valid != null">
+                #{valid,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.dlt.server.facade.dto.SecurityUserDTO">
+        update security_user
+        <set>
+            <if test="realName != null">
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userAddress != null">
+                user_address = #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="occupationLevel != null">
+                occupation_level = #{occupationLevel,jdbcType=INTEGER},
+            </if>
+            <if test="unitId != null">
+                unit_id = #{unitId,jdbcType=VARCHAR},
+            </if>
+            <if test="unitName != null">
+                unit_name = #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="unitType != null">
+                unit_type = #{unitType,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentName != null">
+                department_name = #{departmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone,jdbcType=BIGINT},
+            </if>
+            <if test="valid != null">
+                valid = #{valid,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.dlt.server.facade.dto.SecurityUserDTO">
+        update security_user
+        set real_name = #{realName,jdbcType=VARCHAR},
+        password = #{password,jdbcType=VARCHAR},
+        user_name = #{userName,jdbcType=VARCHAR},
+        user_address = #{userAddress,jdbcType=VARCHAR},
+        occupation_level = #{occupationLevel,jdbcType=INTEGER},
+        unit_id = #{unitId,jdbcType=VARCHAR},
+        unit_name = #{unitName,jdbcType=VARCHAR},
+        unit_type = #{unitType,jdbcType=VARCHAR},
+        department_id = #{departmentId,jdbcType=VARCHAR},
+        department_name= #{departmentName,jdbcType=VARCHAR},
+        role_id = #{roleId,jdbcType=VARCHAR},
+        role_name= #{roleName,jdbcType=VARCHAR},
+        telephone = #{telephone,jdbcType=BIGINT},
+        valid = #{valid,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

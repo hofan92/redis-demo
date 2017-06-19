@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 启动SpringMVC的注解功能，它会自动注册HandlerMapping、 HandlerAdapter、ExceptionResolver的相关实例 -->
+    <mvc:annotation-driven/>
+
+    <context:component-scan base-package="com.dlt.server.web.controller" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="javax.inject.Named"/>
+        <context:exclude-filter type="annotation" expression="javax.inject.Inject"/>
+    </context:component-scan>
+
+    <!-- 静态资源解析 包括 ：js、css、img、.. -->
+    <!--mapping：映射-->
+    <!--location：本地资源路径，注意必须是webapp根目录下的路径。-->
+    <mvc:resources location="/static/" mapping="/static/**"/>
+    <mvc:resources location="/image/" mapping="/image/**"/>
+
+    <!-- 通用视图解析类 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/static/"/>
+        <property name="suffix" value=".*"/>
+    </bean>
+    <!--start:使用Jackson 2.x的配置，需要导入的jar包：jackson-core-xxx.jar、jackson-annotations-xxx.jar、jackson-databind-xxx.jar-->
+    <!--通过处理器映射DefaultAnnotationHandlerMapping来开启支持@Controller注解-->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
+    <!--通过处理器适配器AnnotationMethodHandlerAdapter来开启支持@RequestMapping注解-->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
+    <!--<property name="messageConverters">-->
+    <!--<list>-->
+    <!--&lt;!&ndash; 设置返回字符串编码 &ndash;&gt;-->
+    <!--<bean class="org.springframework.http.converter.StringHttpMessageConverter">-->
+    <!--<property name="supportedMediaTypes">-->
+    <!--<list>-->
+    <!--<value>text/html;charset=UTF-8</value>-->
+    <!--<value>application/json;charset=UTF-8</value>-->
+    <!--</list>-->
+    <!--</property>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash; json转换器 &ndash;&gt;-->
+    <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+    <!--<property name="supportedMediaTypes">-->
+    <!--<list>-->
+    <!--<value>text/html;charset=UTF-8</value>-->
+    <!--<value>application/json;charset=UTF-8</value>-->
+    <!--</list>-->
+    <!--</property>-->
+    <!--</bean>-->
+    <!--</list>-->
+    <!--</property>-->
+    <!--</bean>-->
+    <!--end:使用Jackson 2.x的配置，需要导入的jar包：jackson-core-xxx.jar、jackson-annotations-xxx.jar、jackson-databind-xxx.jar-->
+
+
+    <!-- 配置文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="utf-8"/>
+        <!-- 文件大小最大值 -->
+        <property name="maxUploadSize" value="10485760000"/>
+        <!-- 内存中的最大值 -->
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
+
+    <!-- SpringMVC在超出上传文件限制时，会抛出org.springframewweb1.web.multipart.MaxUploadSizeExceededException -->
+    <!-- 该异常是SpringMVC在检查上传的文件信息时抛出来的，而且此时还没有进入到Controller方法中 -->
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <!-- 遇到MaxUploadSizeExceededException异常时，自动跳转到/WEB-INF/jsp/error_fileupload.jsp页面 -->
+                <prop key="org.springframework.web.multipart.MaxUploadSizeExceededException">error_fileupload</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

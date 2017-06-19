@@ -1,0 +1,55 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>redis-demo</artifactId>
+        <groupId>com.dlt.server</groupId>
+        <version>2.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>redis-demo-core</artifactId>
+    <packaging>jar</packaging>
+    <name>dlt-core Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.dlt.server</groupId>
+            <artifactId>redis-demo-facade</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--JWT token:nimbus-jose-jwt-4.13.1.jar (一款开源的成熟的JSON WEB TOKEN 解决方法，本仓库的代码是对其的进一步封装)-->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>4.13.1</version>
+        </dependency>
+        <!--json-smart-2.0-RC2.jar和asm-1.0-RC1.jar (依赖jar包，主要用于JSONObject序列化)-->
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.0-RC2</version>
+        </dependency>
+
+        <!--淘宝SDK start-->
+        <dependency>
+            <groupId>com.taobao</groupId>
+            <artifactId>taobao-sdk-java-auto_1450195003197</artifactId>
+            <version>20160114</version>
+        </dependency>
+        <!--淘宝SDK end-->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
